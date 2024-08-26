@@ -1,0 +1,107 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  api:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    defaults:
+      run:
+        working-directory: ./api
+
+    steps:
+      - name: 📕 checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🎁 apt-get update
+        run: sudo apt-get update -y
+
+      - name: 😎 install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: 🐍 set up python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: 📦 install dependencies
+        run: uv run bin/install
+
+      - name: 🧹 lint
+        run: uv run bin/check
+
+      - name: 🧪 test
+        run: uv run bin/test
+
+      - name: 🐳 build api docker image
+        run: docker build -t ghcr.io/anthonycorletti/az-simple-stack:latest .
+
+      - name: 🔐 login to docker registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_PAT_GHCR_CASA }}
+
+      - name: 🚚 push api docker image to ghcr
+        run: docker push ghcr.io/casadotdev/casa:latest
+
+      - name: 🏷️ tag and push production image
+        if: github.ref == 'refs/heads/main'
+        run: |
+          docker tag ghcr.io/casadotdev/casa:latest ghcr.io/casadotdev/casa:${{ github.ref }}
+          docker push ghcr.io/casadotdev/casa:${{ github.ref }}
+
+      - name: ✨ deploy to preview environment
+        run: echo "todo" && exit 1
+
+      - name: 🚀 deploy to production
+        if: github.ref == 'refs/heads/main'
+        run: echo "todo" && exit 1
+
+  ui:
+    runs-on: ubuntu-latest
+    needs: api
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    defaults:
+      run:
+        working-directory: ./ui
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🎁 apt-get update
+        run: sudo apt-get update -y
+
+      - name: 📦 install dependencies
+        run: echo "todo" && exit 1
+
+      - name: 🧹 lint
+        run: echo "todo" && exit 1
+
+      - name: 🧪 test
+        run: echo "todo" && exit 1
+
+      - name: 👀 deploy to preview environment
+        run: echo "todo" && exit 1
+
+      - name: 🚀 deploy to production
+        if: github.ref == 'refs/heads/main'
+        run: echo "todo" && exit 1
