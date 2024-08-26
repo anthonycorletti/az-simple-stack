@@ -1,0 +1,19 @@
+{
+  "folders": [
+    {
+      "path": "api",
+      "name": "api"
+    },
+    {
+      "path": "ui",
+      "name": "ui"
+    },
+    {
+      "path": ".",
+      "name": "root",
+    }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "${workspaceFolder:api}/.venv/bin/python",
+  }
+}
