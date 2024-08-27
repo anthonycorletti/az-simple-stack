@@ -78,6 +78,8 @@ jobs:
           else
             GH_REF_SHORT=${GITHUB_REF#refs/heads/}
           fi
+          # replace / with - to make a valid container app name
+          GH_REF_SHORT=${GH_REF_SHORT//\//-}
           echo "GH_REF_SHORT=${GH_REF_SHORT#refs/heads/}" >> $GITHUB_ENV
 
       - name: ✨ deploy container app
