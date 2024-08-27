@@ -71,8 +71,10 @@ jobs:
       - name: ✨ deploy to preview container app
         uses: azure/container-apps-deploy-action@v1
         with:
-          resourceGroup: az-simple-stack
+          containerAppEnvironment: ${{ env.GITHUB_REF_NAME }}
           imageToDeploy: ghcr.io/anthonycorletti/az-simple-stack:latest
+          resourceGroup: az-simple-stack
+          targetPort: 8000
 
       # - name: 🚀 deploy to production
       #   if: github.ref == 'refs/heads/main'
