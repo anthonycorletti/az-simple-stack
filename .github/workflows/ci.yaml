@@ -5,14 +5,13 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize]
     branches:
       - main
 
 jobs:
   api:
     runs-on: ubuntu-latest
-    if: github.event.action != 'closed'
 
     strategy:
       matrix:
@@ -128,12 +127,12 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: ✨ deploy static web app
-        if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
         uses: azure/static-web-apps-deploy@v1
         with:
           action: "upload"
           app_build_command: bun run build
           app_location: "/"
+          api_location: ""
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_THANKFUL_BEACH_0E731BB0F }}
           output_location: build
           repo_token: ${{ secrets.GITHUB_TOKEN }}
