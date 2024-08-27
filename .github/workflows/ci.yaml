@@ -75,6 +75,7 @@ jobs:
           containerAppName: ${{ env.GITHUB_REF_NAME }}
           imageToDeploy: ghcr.io/anthonycorletti/az-simple-stack:latest
           location: eastus
+          ingress: external
           registryPassword: ${{ secrets.GH_PAT_GHCR_TOKEN }}
           regsitryUsername: ${{ github.actor }}
           resourceGroup: az-simple-stack
