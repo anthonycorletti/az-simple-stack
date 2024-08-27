@@ -71,8 +71,12 @@ jobs:
       - name: ✨ deploy to preview container app
         uses: azure/container-apps-deploy-action@v1
         with:
-          containerAppEnvironment: ${{ env.GITHUB_REF_NAME }}
+          containerAppEnvironment: ${{ env.GITHUB_REF_NAME }}-env
+          containerAppName: ${{ env.GITHUB_REF_NAME }}
           imageToDeploy: ghcr.io/anthonycorletti/az-simple-stack:latest
+          location: eastus
+          registryPassword: ${{ secrets.GH_PAT_GHCR_TOKEN }}
+          regsitryUsername: ${{ github.actor }}
           resourceGroup: az-simple-stack
           targetPort: 8000
 
