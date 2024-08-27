@@ -72,7 +72,12 @@ jobs:
 
       - name: set github branch name in env
         run: |
-          GH_REF_SHORT=${{ github.ref }}
+          # if the event is a pull request, use the head ref
+          if [ -n "$GITHUB_HEAD_REF" ]; then
+            GH_REF_SHORT=${GITHUB_HEAD_REF#refs/heads/}
+          else
+            GH_REF_SHORT=${GITHUB_REF#refs/heads/}
+          fi
           echo "GH_REF_SHORT=${GH_REF_SHORT#refs/heads/}" >> $GITHUB_ENV
 
       - name: ✨ deploy container app
