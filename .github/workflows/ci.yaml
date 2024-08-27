@@ -56,18 +56,26 @@ jobs:
       - name: 🚚 push api docker image to ghcr
         run: docker push ghcr.io/anthonycorletti/az-simple-stack:latest
 
-      - name: 🏷️ tag and push production image
-        if: github.ref == 'refs/heads/main'
-        run: |
-          docker tag ghcr.io/anthonycorletti/az-simple-stack:latest ghcr.io/anthonycorletti/az-simple-stack:${{ github.ref }}
-          docker push ghcr.io/anthonycorletti/az-simple-stack:${{ github.ref }}
+      # TODO
+      # - name: 🏷️ tag and push production image
+      #   if: github.ref == 'refs/heads/main'
+      #   run: |
+      #     docker tag ghcr.io/anthonycorletti/az-simple-stack:latest ghcr.io/anthonycorletti/az-simple-stack:${{ github.ref }}
+      #     docker push ghcr.io/anthonycorletti/az-simple-stack:${{ github.ref }}
 
-      - name: ✨ deploy to preview environment
-        run: echo "todo" && exit 1
+      - name: ☁️ log in to azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: 🚀 deploy to production
-        if: github.ref == 'refs/heads/main'
-        run: echo "todo" && exit 1
+      - name: ✨ deploy to preview container app
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          imageToDeploy: ghcr.io/anthonycorletti/az-simple-stack:latest
+
+      # - name: 🚀 deploy to production
+      #   if: github.ref == 'refs/heads/main'
+      #   run: echo "todo" && exit 1
 
   ui:
     runs-on: ubuntu-latest
