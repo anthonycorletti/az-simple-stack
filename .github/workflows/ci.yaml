@@ -51,16 +51,16 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GH_PAT_GHCR_CASA }}
+          password: ${{ secrets.GH_PAT_GHCR_TOKEN }}
 
       - name: 🚚 push api docker image to ghcr
-        run: docker push ghcr.io/casadotdev/casa:latest
+        run: docker push ghcr.io/anthonycorletti/az-simple-stack:latest
 
       - name: 🏷️ tag and push production image
         if: github.ref == 'refs/heads/main'
         run: |
-          docker tag ghcr.io/casadotdev/casa:latest ghcr.io/casadotdev/casa:${{ github.ref }}
-          docker push ghcr.io/casadotdev/casa:${{ github.ref }}
+          docker tag ghcr.io/anthonycorletti/az-simple-stack:latest ghcr.io/anthonycorletti/az-simple-stack:${{ github.ref }}
+          docker push ghcr.io/anthonycorletti/az-simple-stack:${{ github.ref }}
 
       - name: ✨ deploy to preview environment
         run: echo "todo" && exit 1
