@@ -1,0 +1,12 @@
+#!/bin/sh -e
+
+uv run ./bin/clean
+
+uv run ./bin/install
+
+uv run ./bin/format
+
+uv run ./bin/check
+
+uv run ./bin/test
+
