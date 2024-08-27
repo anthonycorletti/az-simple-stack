@@ -5,11 +5,14 @@ on:
     branches:
       - main
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
 
 jobs:
   api:
     runs-on: ubuntu-latest
+    if: github.event.action != 'closed'
 
     strategy:
       matrix:
@@ -68,7 +71,7 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: ✨ deploy to preview container app
+      - name: ✨ deploy container app
         uses: azure/container-apps-deploy-action@v1
         with:
           containerAppEnvironment: ${{ github.ref_name }}-env
@@ -81,10 +84,6 @@ jobs:
           registryUsername: ${{ github.actor }}
           resourceGroup: az-simple-stack
           targetPort: 8000
-
-      # - name: 🚀 deploy to production
-      #   if: github.ref == 'refs/heads/main'
-      #   run: echo "todo" && exit 1
 
   ui:
     runs-on: ubuntu-latest
@@ -107,18 +106,33 @@ jobs:
       - name: 🎁 apt-get update
         run: sudo apt-get update -y
 
+      - name: 🥟 install bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       - name: 📦 install dependencies
-        run: echo "todo" && exit 1
+        run: bun install
 
       - name: 🧹 lint
-        run: echo "todo" && exit 1
+        run: bun run lint
 
       - name: 🧪 test
-        run: echo "todo" && exit 1
+        run: bun run test
 
-      - name: 👀 deploy to preview environment
-        run: echo "todo" && exit 1
+      - name: ☁️ log in to azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: 🚀 deploy to production
-        if: github.ref == 'refs/heads/main'
-        run: echo "todo" && exit 1
+      - name: ✨ deploy static web app
+        if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+        uses: azure/static-web-apps-deploy@v1
+        with:
+          action: "upload"
+          app_build_command: bun run build
+          app_location: "/"
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          output_location: build
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          skip_api_build: true
