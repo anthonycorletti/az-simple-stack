@@ -77,7 +77,7 @@ jobs:
           location: eastus
           ingress: external
           registryPassword: ${{ secrets.GH_PAT_GHCR_TOKEN }}
-          regsitryUsername: ${{ github.actor }}
+          registryUsername: ${{ github.actor }}
           resourceGroup: az-simple-stack
           targetPort: 8000
 
