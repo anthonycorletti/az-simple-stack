@@ -71,8 +71,8 @@ jobs:
       - name: ✨ deploy to preview container app
         uses: azure/container-apps-deploy-action@v1
         with:
-          containerAppEnvironment: ${{ env.GITHUB_REF_NAME }}-env
-          containerAppName: ${{ env.GITHUB_REF_NAME }}
+          containerAppEnvironment: ${{ github.ref_name }}-env
+          containerAppName: ${{ github.ref_name }}
           imageToDeploy: ghcr.io/anthonycorletti/az-simple-stack:latest
           location: eastus
           ingress: external
