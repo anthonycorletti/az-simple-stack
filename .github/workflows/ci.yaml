@@ -70,11 +70,23 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: set github branch name in env
+        run: |
+          # if the event is a pull request, use the head ref
+          if [ -n "$GITHUB_HEAD_REF" ]; then
+            GH_REF_SHORT=${GITHUB_HEAD_REF#refs/heads/}
+          else
+            GH_REF_SHORT=${GITHUB_REF#refs/heads/}
+          fi
+          # replace / with - to make a valid container app name
+          GH_REF_SHORT=${GH_REF_SHORT//\//-}
+          echo "GH_REF_SHORT=${GH_REF_SHORT#refs/heads/}" >> $GITHUB_ENV
+
       - name: ✨ deploy container app
         uses: azure/container-apps-deploy-action@v1
         with:
-          containerAppEnvironment: ${{ github.ref_name }}-env
-          containerAppName: ${{ github.ref_name }}
+          containerAppEnvironment: ${{ env.GH_REF_SHORT }}-env
+          containerAppName: ${{ env.GH_REF_SHORT }}
           imageToDeploy: ghcr.io/anthonycorletti/az-simple-stack:latest
           location: eastus
           ingress: external
